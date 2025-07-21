@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Breathing Circle</title>
+  <style>
+    body {
+      background: #333;
+      color: #eee;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+    }
+
+    .circle {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 10px solid #ccc;
+      box-sizing: border-box;
+      position: relative;
+      mask-image: conic-gradient(#0000 0%, #000 100%);
+    }
+
+    .indicator {
+      width: 20px;
+      height: 20px;
+      background-color: pink;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -130px);
+      transform-origin: center;
+      transition: transform 1s ease-in-out;
+    }
+
+    @keyframes inhale {
+      from { transform: rotate(0deg) translate(-50%, -130px); }
+      to { transform: rotate(120deg) translate(-50%, -130px); }
+    }
+
+    @keyframes hold {
+      from { transform: rotate(120deg) translate(-50%, -130px); }
+      to { transform: rotate(240deg) translate(-50%, -130px); }
+    }
+
+    @keyframes exhale {
+      from { transform: rotate(240deg) translate(-50%, -130px); }
+      to { transform: rotate(360deg) translate(-50%, -130px); }
+    }
+
+    .label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .time-display {
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="circle" id="circle"></div>
+    <div class="indicator" id="indicator"></div>
+    <div class="label" id="phaseLabel">Inhale</div>
+    <div class="time-display" id="timeDisplay">8 seconds</div>
+  </div>
+
+  <script>
+    const circle = document.getElementById('circle');
+    const label = document.getElementById('phaseLabel');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const indicator = document.getElementById('indicator');
+
+    const phases = [
+      { name: 'Inhale', color: '#3498db', duration: 8000, displayTime: '8 seconds', animation: 'inhale' },   // 8 seconds
+      { name: 'Hold',   color: '#e74c3c', duration: 30000, displayTime: '30 seconds', animation: 'hold' }, // 30 seconds
+      { name: 'Exhale', color: '#2ecc71', duration: 8000, displayTime: '8 seconds', animation: 'exhale' }    // 8 seconds
+    ];
+
+    let index = 0;
+    let currentTimeout;
+
+    function updatePhase() {
+      const phase = phases[index];
+      circle.style.borderColor = phase.color;
+      label.textContent = phase.name;
+      timeDisplay.textContent = phase.displayTime;
+      
+      // Apply the animation for this phase
+      indicator.style.animation = `${phase.animation} ${phase.duration}ms linear forwards`;
+      
+      index = (index + 1) % phases.length;
+      
+      // Clear previous timeout and set new one with current phase duration
+      clearTimeout(currentTimeout);
+      currentTimeout = setTimeout(updatePhase, phase.duration);
+    }
+
+    // Initial set
+    updatePhase();
+  </script>
+
+</body>
+</html>
